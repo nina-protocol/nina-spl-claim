@@ -11,6 +11,7 @@ pub mod nina_spl_claim {
     ) -> ProgramResult {
         let faucet = &mut ctx.accounts.faucet;
         faucet.faucet_signer = *ctx.accounts.faucet_signer.to_account_info().key;
+        faucet.faucet_authority = *ctx.accounts.faucet_authority.to_account_info().key;
         faucet.claim_mint = *ctx.accounts.claim_mint.to_account_info().key;
         faucet.claim_faucet = *ctx.accounts.claim_faucet.to_account_info().key;
         faucet.nonce = nonce;
@@ -111,6 +112,7 @@ pub mod nina_spl_claim {
 pub struct Initialize<'info> {
     #[account(init)]
     pub faucet: ProgramAccount<'info, Faucet>,
+    pub faucet_authority: AccountInfo<'info>,
     pub faucet_signer: AccountInfo<'info>,
     pub claim_mint: CpiAccount<'info, Mint>,
     pub claim_faucet: CpiAccount<'info, TokenAccount>,
@@ -167,6 +169,7 @@ pub struct CloseFaucet<'info> {
 #[account]
 pub struct Faucet {
     pub faucet_signer: Pubkey,
+    pub faucet_authority: Pubkey,
     pub claim_mint: Pubkey,
     pub claim_faucet: Pubkey,
     pub nonce: u8,

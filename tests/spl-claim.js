@@ -10,7 +10,7 @@ const {
   mintToAccount,
 } = require("./utils");
 
-describe('nina-spl-claim', () => {
+describe('spl-claim', () => {
   const provider = anchor.Provider.env()
   anchor.setProvider(provider);
 
@@ -22,7 +22,7 @@ describe('nina-spl-claim', () => {
   let faucetSigner = null;
   let nonce = null;
   let refillAmount = null;
-  it('Is initialized!', async () => {
+  it('Initializes Faucet', async () => {
     faucet = new anchor.web3.Account();
 
     [faucetSigner, nonce] = await anchor.web3.PublicKey.findProgramAddress(
@@ -43,6 +43,7 @@ describe('nina-spl-claim', () => {
         claimMint,
         claimFaucet,
         faucetSigner,
+        faucetAuthority: provider.wallet.publicKey,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
       signers: [faucet],
