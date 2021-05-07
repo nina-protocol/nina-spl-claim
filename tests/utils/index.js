@@ -49,7 +49,7 @@ async function createMintInstructions(provider, authority, mint) {
     }),
     TokenInstructions.initializeMint({
       mint,
-      decimals: 6,
+      decimals: 0,
       mintAuthority: authority,
     }),
   ];

@@ -61,18 +61,21 @@ pub mod nina_spl_claim {
             to: ctx.accounts.user_claim_token_account.to_account_info(),
             authority: ctx.accounts.faucet_signer.clone(),
         };
-
+        msg!["Transfer Insruction 0"];
         let cpi_program = ctx.accounts.token_program.to_account_info();
-        
+                msg!["Transfer Insruction 1"];
+
         let seeds = &[
             faucet.to_account_info().key.as_ref(),
             &[faucet.nonce],
         ];
         let signer = &[&seeds[..]];
+        msg!["Transfer Insruction 2"];
 
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer);
+              msg!["Transfer Insruction 3"];
         token::transfer(cpi_ctx, 1)?;
-
+        msg!["Transfer Insruction 4"];
         faucet.num_claim_total_claimed += 1;
         
         Ok(())
