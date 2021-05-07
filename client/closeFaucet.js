@@ -9,6 +9,7 @@ const {
   getTokenAccount,
 } = require("../tests/utils");
 
+const FAUCET_ACCONUT = require('./faucet');
 
 async function main() {
   // #region main
@@ -25,7 +26,7 @@ async function main() {
   const program = new anchor.Program(idl, programId);
 
   // Get the faucet that you want to refill
-  const faucetId = new anchor.web3.PublicKey('8FJiqnQxdV8oZVLWqVrqA3GxvBJnJL4xCeEae85ZiTfK');
+  const faucetId = FAUCET_ACCONUT;
   let faucet = await program.account.faucet(faucetId);
 
   let claimFaucetTokenAccount = await getTokenAccount(provider, faucet.claimFaucet);

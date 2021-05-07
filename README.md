@@ -18,7 +18,7 @@ A developer using the program creates a faucet, fills it when they want to provi
 To create a faucet:
 `node client/initialize.js`
 
-[Take note of the Faucet Program Address printed out on initialization.  You will need to set `FAUCET_ACCOUNT` in `/app/src/utils/faucet.js` to this value.]
+[Take note of the Faucet Program Address printed out on initialization.  You will need to set `FAUCET_ACCOUNT` in `/app/src/utils/faucet.js` and `/client/faucet.js`to this value as well .]
 
 To fill the faucet:
 `node client/refillFaucet.js`
