@@ -123,12 +123,15 @@ pub struct Initialize<'info> {
 pub struct RefillFaucet<'info> {
     #[account(mut)]
     pub faucet_signer: AccountInfo<'info>,
-    #[account(mut)]
+    #[account(mut, has_one = claim_faucet, has_one = faucet_authority)]
     pub faucet: ProgramAccount<'info, Faucet>,
     #[account(mut)]
     pub claim_mint: CpiAccount<'info, Mint>,
     #[account(mut)]
     pub claim_faucet: CpiAccount<'info, TokenAccount>,
+    #[account(signer)]
+    pub authority: AccountInfo<'info>,
+    pub faucet_authority: AccountInfo<'info>,
     pub token_program: AccountInfo<'info>,
     pub system_program: AccountInfo<'info>,
     pub rent: Sysvar<'info, Rent>,
@@ -155,12 +158,15 @@ pub struct ClaimToken<'info> {
 pub struct CloseFaucet<'info> {
     #[account(mut)]
     pub faucet_signer: AccountInfo<'info>,
-    #[account(mut)]
+    #[account(mut, has_one = claim_faucet, has_one = faucet_authority)]
     pub faucet: ProgramAccount<'info, Faucet>,
     #[account(mut)]
     pub claim_mint: CpiAccount<'info, Mint>,
     #[account(mut)]
     pub claim_faucet: CpiAccount<'info, TokenAccount>,
+    #[account(signer)]
+    pub authority: AccountInfo<'info>,
+    pub faucet_authority: AccountInfo<'info>,
     pub token_program: AccountInfo<'info>,
     pub system_program: AccountInfo<'info>,
     pub rent: Sysvar<'info, Rent>,

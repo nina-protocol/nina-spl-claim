@@ -1,2 +1,2 @@
-cluster = "devnet"
+cluster = "localnet"
 wallet = "/Users/michaelpollard/.config/solana/id.json"
