@@ -3,13 +3,15 @@ import { SnackbarProvider } from 'notistack';
 import ConnectionContextProvider from './utils/connection';
 import WalletContextProvider from './utils/wallet';
 import AccessContextProvider from './utils/access';
+import './App.scss';
+
 
 import Router from './routes'
 
 function App() {
   return (
-    <SnackbarProvider 
-      maxSnack={3} 
+    <SnackbarProvider
+      maxSnack={3}
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'right',

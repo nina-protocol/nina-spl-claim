@@ -1,0 +1,58 @@
+$gutter: 1rem;
+$half-gutter: 0.5rem;
+$page-height: 85vh;
+$page-width-max: 80vw;
+$border-radius: 16px;
+$purple: #9999cc;
+$purple-light: #bcb2bf;
+
+$purple: #9999cc;
+$green: #32b36c;
+$red: #E05132;
+$white: #ffffff;
+
+// ======================================================================================
+//  Media Queries
+// ======================================================================================
+$grid-small: 375px;
+$grid-medium: 768px;
+$grid-large: 992px;
+$grid-widescreen: 1400px;
+$grid-gutter: 30px;
+$grid-gutter-mobile: 22px;
+$x-small: "x-small";
+$small: "small";
+$medium: "medium";
+$medium-down: "medium-down";
+$medium-up: "medium-up";
+$large: "large";
+$large-down: "large-down";
+$large-up: "large-up";
+$widescreen: "widescreen"; // The `$grid-breakpoints` list is used to build our media queries.
+// You can use these in the media-query mixin.
+$grid-breakpoints: (
+  $x-small "(max-width: #{$grid-small - 1})",
+  $small "(max-width: #{$grid-medium - 1})",
+  $medium "(min-width: #{$grid-medium}) and (max-width: #{$grid-large - 1})",
+  $medium-down "(max-width: #{$grid-large - 1})",
+  $medium-up "(min-width: #{$grid-medium})",
+  $large "(min-width: #{$grid-large}) and (max-width: #{$grid-widescreen - 1})",
+  $large-down "(max-width: #{$grid-widescreen - 1})",
+  $large-up "(min-width: #{$grid-large})",
+  $widescreen "(min-width: #{$grid-widescreen})"
+);
+/*============================================================================
+  Generate breakpoint-specific column widths and push classes
+    - Default column widths: $grid-breakpoint-has-widths: ($small, $medium-up);
+    - Default is no push classes
+==============================================================================*/
+$grid-breakpoint-has-widths: (
+  $x-small,
+  $small,
+  $medium-up,
+  $medium-down,
+  $large-up,
+  $large-down
+);
+//TRANSITIONS
+$opacity-transition: 680ms;
