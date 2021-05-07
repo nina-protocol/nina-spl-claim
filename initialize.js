@@ -20,7 +20,7 @@ async function main() {
   const idl = JSON.parse(require('fs').readFileSync('./target/idl/nina_spl_claim.json', 'utf8'));
 
   // Address of the deployed program.
-  const programId = new anchor.web3.PublicKey('4NcrT3M7DFF9CnAuFC4iWhEnxMJn3AFo5aw3zpw87XzX');
+  const programId = new anchor.web3.PublicKey('FMuM2X5T4sju5zE6NHexuYyHX2WjL5qZmwSSYq4WdGKK');
 
   // Generate the program client from IDL.
   const program = new anchor.Program(idl, programId);
@@ -53,9 +53,7 @@ async function main() {
   });
   
   const faucetAccount = await program.account.faucet(faucet.publicKey);
-  console.log('Faucet created: ', faucet.publicKey.toString())
-  console.log('mint: ', claimMint.toString())
-  console.log('faucet claim: ', claimFaucet.toString())
+  console.log('Faucet Program Address: ', faucet.publicKey.toString())
 
   // #endregion main
 }

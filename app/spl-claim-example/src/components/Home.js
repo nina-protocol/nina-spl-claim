@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button'
 import {AccessContext} from '../utils/access'
 import {useWallet} from '../utils/wallet'
 
+import ProtectedArea from './ProtectedArea'
 import Wallet from './Wallet'
 
 const Home = () => {
@@ -24,7 +25,7 @@ const Home = () => {
   useEffect(() => {
     console.log('FAUCET: ', faucet)
     setFaucetState(faucet)
-  }, [faucet?.nonce])
+  }, [faucet?.numClaimTotalClaimed])
 
   const onClick = () => {
     claimToken()
@@ -37,7 +38,7 @@ const Home = () => {
           <Wallet />
         }
         {connected && hasAccessState &&
-          <p>You have access!</p>
+          <ProtectedArea />
         }
         {connected && !hasAccessState &&
           <Button

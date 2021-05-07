@@ -3,9 +3,9 @@ import {
 } from '@solana/web3.js';
 
 export const FAUCET_ACCOUNT = new PublicKey(
-  'ATsFZKUj5cT3JDL7ghpQbheGtp7vefqXJER9DAMw4tn2',
+  '8FJiqnQxdV8oZVLWqVrqA3GxvBJnJL4xCeEae85ZiTfK',
 );
 
 export const SPL_CLAIM_PROGRAM = new PublicKey(
-  '4NcrT3M7DFF9CnAuFC4iWhEnxMJn3AFo5aw3zpw87XzX',
+  'FMuM2X5T4sju5zE6NHexuYyHX2WjL5qZmwSSYq4WdGKK',
 );

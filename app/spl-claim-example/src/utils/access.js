@@ -22,6 +22,7 @@ import {
 import {
   createTokenAccount,
   TOKEN_PROGRAM_ID,
+  sleep,
 } from './web3'
 
 import {idl} from './idl'
@@ -32,9 +33,10 @@ const AccessContextProvider = (props) => {
   const {wallet, connected} = useWallet()
   const {connection} = useContext(ConnectionContext)
 
-  const [hasAccess, setHasAccess] = useState(false)
+  const [hasAccess, setHasAccess] = useState(false);
+  const [claimTokenAccount, setClaimTokenAccount] = useState(undefined)
   const [faucet, setFaucet] = useState(undefined);
-  const [program, setProgram] = useState(undefined)
+  const [program, setProgram] = useState(undefined);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -49,6 +51,8 @@ const AccessContextProvider = (props) => {
     setFaucet,
     program,
     setProgram,
+    claimTokenAccount,
+    setClaimTokenAccount,
     connection,
     wallet,
   )
@@ -88,6 +92,8 @@ const accessContextHelper = (
   setFaucet,
   program,
   setProgram,
+  claimTokenAccount,
+  setClaimTokenAccount,
   connection,
   wallet,
 ) => {
@@ -99,12 +105,12 @@ const accessContextHelper = (
           wallet.publicKey,
           {mint: faucet.claimMint}
         )
-        console.log(tokenAccounts)
-        console.log(wallet)
         if (tokenAccounts.value.length > 0) {
           tokenAccounts.value.forEach(account => {
             if (account.account.data.parsed.info.tokenAmount.uiAmount > 0) {
               setHasAccess(true)
+            } else {
+              setClaimTokenAccount(account.account.pubkey)
             }
           })
         } 
@@ -119,14 +125,17 @@ const accessContextHelper = (
   }
 
   const claimToken = async () => {
-    console.log(wallet)
-    const userClaimTokenAccount = await createTokenAccount(
-      connection,
-      wallet,
-      faucet.claimMint,
-      wallet.publicKey,
-    );
-    
+    await getFaucetInfo()
+    let userClaimTokenAccount = claimTokenAccount
+    if (!userClaimTokenAccount) {
+      userClaimTokenAccount = await createTokenAccount(
+        connection,
+        wallet,
+        faucet.claimMint,
+        wallet.publicKey,
+      );
+    };
+
     console.log('userClaimTokenAccount: ', userClaimTokenAccount.toString())
     console.log('faucet: ', FAUCET_ACCOUNT.toString())
     console.log('faucetSigner: ', faucet.faucetSigner.toString())
@@ -136,6 +145,7 @@ const accessContextHelper = (
     console.log('systemProgram: ', SystemProgram.programId.toString())
     console.log('SYSVAR_RENT_PUBKEY ', SYSVAR_RENT_PUBKEY.toString())
     console.log('wallet.publicKey ', wallet.publicKey.toString())
+    await getFaucetInfo()
 
     const tx = await program.rpc.claimToken({
       accounts: {
@@ -149,7 +159,8 @@ const accessContextHelper = (
         rent: SYSVAR_RENT_PUBKEY,
       },
     });
-
+    await getFaucetInfo()
+    await checkHasAccess()
     console.log('tx')
   }
 
@@ -158,6 +169,7 @@ const accessContextHelper = (
       preflightCommitment: 'recent',
       commitment: 'recent',
     };
+
     const provider = new Provider(connection, wallet, options)
     // Address of the deployed program.
     const programId = SPL_CLAIM_PROGRAM;

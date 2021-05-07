@@ -7,11 +7,13 @@ const {
 
 const TokenInstructions = require("@project-serum/serum").TokenInstructions;
 
-// TODO: remove this constant once @project-serum/serum uses the same version
-//       of @solana/web3.js as anchor (or switch packages).
 const TOKEN_PROGRAM_ID = new PublicKey(
   TokenInstructions.TOKEN_PROGRAM_ID.toString()
 );
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 async function createTokenAccount(
   connection,
@@ -69,4 +71,5 @@ async function createTokenAccountInstrs(
 module.exports = {
   TOKEN_PROGRAM_ID,
   createTokenAccount,
+  sleep,
 };

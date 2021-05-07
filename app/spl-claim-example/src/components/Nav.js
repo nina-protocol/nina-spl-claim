@@ -12,7 +12,7 @@ import {
 const NavBar = (props) => {  
   return (
        <Nav className="nav">
-       <NavLink to='/' activeStyle>Spl-Claim Example</NavLink>
+       <NavLink to='/' activeStyle>Nina Spl-Claim Progam</NavLink>
         <NavBtn>
           <Wallet />
         </NavBtn>
