@@ -31,7 +31,7 @@ To burn unclaimed supply:
 ```
 node client/burn.js
 ```
-### Frontent Example
+### Frontend Example
 A basic ReactJS frontend is provided in `/app` - in this example only holders of the Claim-Token for this app have access to `/app/src/components/ProtectedArea.js`
 
 To Run:
