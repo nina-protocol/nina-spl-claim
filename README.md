@@ -27,10 +27,11 @@ To fill the faucet:
 node client/refillFaucet.js
 ```
 
-To burn unclaimed supply:
+To burn unclaimed supply and close faucet from new claims:
 ```
-node client/burn.js
+node client/closeFaucet.js
 ```
+
 ### Frontend Example
 A basic ReactJS frontend is provided in `/app` - in this example only holders of the Claim-Token for this app have access to `/app/src/components/ProtectedArea.js`
 
