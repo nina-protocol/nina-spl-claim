@@ -8,7 +8,8 @@ const {
   createMint,
   createTokenAccount,
   mintToAccount,
-} = require("./utils");
+  findOrCreateAssociatedTokenAccount,
+} = require('./utils');
 
 describe('spl-claim', () => {
   const provider = anchor.Provider.env()
@@ -22,6 +23,7 @@ describe('spl-claim', () => {
   let faucetSigner = null;
   let nonce = null;
   let refillAmount = null;
+
   it('Initializes Faucet', async () => {
     faucet = new anchor.web3.Account();
 
@@ -80,12 +82,17 @@ describe('spl-claim', () => {
   })
 
   it('Dispense a claim from the faucet', async () => {
-    
-    const userClaimTokenAccount = await createTokenAccount(
+
+    const authority = program.provider.wallet.publicKey;
+
+    const userClaimTokenAccount = await findOrCreateAssociatedTokenAccount(
       provider,
-      claimMint,
-      provider.wallet.publicKey,
-    );
+      anchor.web3.SystemProgram.programId,
+      anchor.web3.SYSVAR_RENT_PUBKEY,
+      authority,
+      authority,
+      claimMint
+    )
 
     const tx = await program.rpc.claimToken({
       accounts: {
@@ -99,6 +106,7 @@ describe('spl-claim', () => {
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
     });
+
 
     const faucetAccount = await program.account.faucet(faucet.publicKey);
     assert.ok(faucetAccount.numClaimRefills.toNumber() === 1);

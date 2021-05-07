@@ -10,6 +10,10 @@ const TOKEN_PROGRAM_ID = new anchor.web3.PublicKey(
   TokenInstructions.TOKEN_PROGRAM_ID.toString()
 );
 
+const ASSOCIATED_TOKEN_PROGRAM_ID = new anchor.web3.PublicKey(
+  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
+);
+
 // Our own sleep function.
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -129,6 +133,93 @@ async function createMintToAccountInstrs(
   ];
 }
 
+const findAssociatedTokenAddress = async (
+  walletAddress,
+  tokenMintAddress
+) => {
+  return (
+    await anchor.web3.PublicKey.findProgramAddress(
+      [walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()],
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )
+  )[0]
+}
+
+const findOrCreateAssociatedTokenAccount = async(
+  provider,
+  systemProgramId,
+  clockSysvarId,
+  fundingAddress,
+  walletAddress,
+  splTokenMintAddress
+) => {
+  const associatedTokenAddress = await findAssociatedTokenAddress(
+    walletAddress,
+    splTokenMintAddress
+  );
+
+  const userAssociatedTokenAddress = await provider.connection.getParsedTokenAccountsByOwner(
+    walletAddress,
+    {mint: splTokenMintAddress}
+  )
+   console.log(userAssociatedTokenAddress)
+  if (!userAssociatedTokenAddress.value.length > 0) {
+    const keys = [
+      {
+        pubkey: fundingAddress,
+        isSigner: true,
+        isWritable: true
+      },
+      {
+        pubkey: associatedTokenAddress,
+        isSigner: false,
+        isWritable: true
+      },
+      {
+        pubkey: walletAddress,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: splTokenMintAddress,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: systemProgramId,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: TOKEN_PROGRAM_ID,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: anchor.web3.SYSVAR_RENT_PUBKEY,
+        isSigner: false,
+        isWritable: false
+      }
+    ];
+
+    const ix = new anchor.web3.TransactionInstruction({
+      keys,
+      programId: ASSOCIATED_TOKEN_PROGRAM_ID,
+      data: Buffer.from([])
+    });
+
+    const tx = new anchor.web3.Transaction();
+    tx.add(ix);
+    await provider.send(tx, []);
+    console.log('created: ', associatedTokenAddress);
+    return associatedTokenAddress;
+  } else {
+    return associatedTokenAddress;
+  }
+
+}
+
+
 module.exports = {
   TOKEN_PROGRAM_ID,
   sleep,
@@ -136,4 +227,6 @@ module.exports = {
   createMint,
   createTokenAccount,
   mintToAccount,
+  findAssociatedTokenAddress,
+  findOrCreateAssociatedTokenAccount,
 };

@@ -3,6 +3,8 @@ const {
   PublicKey,
   SystemProgram,
   Transaction,
+  TransactionInstruction,
+  SYSVAR_RENT_PUBKEY,
 } = require('@solana/web3.js');
 
 const TokenInstructions = require("@project-serum/serum").TokenInstructions;
@@ -11,65 +13,106 @@ const TOKEN_PROGRAM_ID = new PublicKey(
   TokenInstructions.TOKEN_PROGRAM_ID.toString()
 );
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
+  'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
+);
 
-async function createTokenAccount(
+const findAssociatedTokenAddress = async (
+  walletAddress,
+  tokenMintAddress
+) => {
+  return (
+    await PublicKey.findProgramAddress(
+      [walletAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMintAddress.toBuffer()],
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )
+  )[0]
+};
+
+const findOrCreateAssociatedTokenAccount = async(
   connection,
   wallet,
-  mint,
-  owner
-) {
-  const vault = new Account();
-  
-  let { blockhash } = await connection.getRecentBlockhash();
-  const tx = new Transaction({
-    recentBlockhash: blockhash,
-    feePayer: wallet.publicKey,
-  });
-  
-  tx.add(
-    ...(await createTokenAccountInstrs(connection, wallet, vault.publicKey, mint, owner))
+  systemProgramId,
+  clockSysvarId,
+  splTokenMintAddress
+) => {
+  const associatedTokenAddress = await findAssociatedTokenAddress(
+    wallet.publicKey,
+    splTokenMintAddress
   );
-  tx.setSigners(wallet.publicKey, vault.publicKey)
-  tx.partialSign(vault)
-  let signed = await wallet.signTransaction(tx);
-  let txid = await connection.sendRawTransaction(signed.serialize());
-  await connection.confirmTransaction(txid, 'finalized');
 
-  return vault.publicKey;
-}
+  const userAssociatedTokenAddress = await connection.getParsedTokenAccountsByOwner(
+    wallet.publicKey,
+    {mint: splTokenMintAddress}
+  )
+  
+  if (!userAssociatedTokenAddress.value.length > 0) {
 
-async function createTokenAccountInstrs(
-  connection,
-  wallet,
-  newAccountPubkey,
-  mint,
-  owner,
-  lamports
-) {
-  if (lamports === undefined) {
-    lamports = await connection.getMinimumBalanceForRentExemption(165);
+    const keys = [
+      {
+        pubkey: wallet.publicKey,
+        isSigner: true,
+        isWritable: true
+      },
+      {
+        pubkey: associatedTokenAddress,
+        isSigner: false,
+        isWritable: true
+      },
+      {
+        pubkey: wallet.publicKey,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: splTokenMintAddress,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: systemProgramId,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: TOKEN_PROGRAM_ID,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: SYSVAR_RENT_PUBKEY,
+        isSigner: false,
+        isWritable: false
+      }
+    ];
+
+    const ix = new TransactionInstruction({
+      keys,
+      programId: ASSOCIATED_TOKEN_PROGRAM_ID,
+      data: Buffer.from([])
+    });
+
+    let { blockhash } = await connection.getRecentBlockhash();
+
+    const tx = new Transaction({
+      recentBlockhash: blockhash,
+      feePayer: wallet.publicKey,
+    });    
+    tx.add(ix);
+    tx.setSigners(wallet.publicKey);
+
+    let signed = await wallet.signTransaction(tx);
+    let txid = await connection.sendRawTransaction(signed.serialize());
+    // await connection.confirmTransaction(txid, 'finalized');
+
+    console.log('created: ', associatedTokenAddress);
+    return associatedTokenAddress;
+  } else {
+    return associatedTokenAddress;
   }
-  return [
-    SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey,
-      space: 165,
-      lamports,
-      programId: TOKEN_PROGRAM_ID,
-    }),
-    TokenInstructions.initializeAccount({
-      account: newAccountPubkey,
-      mint,
-      owner,
-    }),
-  ];
 }
 
 module.exports = {
   TOKEN_PROGRAM_ID,
-  createTokenAccount,
-  sleep,
+  findOrCreateAssociatedTokenAccount,
 };

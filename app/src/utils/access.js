@@ -20,9 +20,8 @@ import {
 } from './faucet'
 
 import {
-  createTokenAccount,
+  findOrCreateAssociatedTokenAccount,
   TOKEN_PROGRAM_ID,
-  sleep,
 } from './web3'
 
 import {idl} from './idl'
@@ -127,27 +126,18 @@ const accessContextHelper = (
   const claimToken = async () => {
     await getFaucetInfo()
     let userClaimTokenAccount = claimTokenAccount
+    
     if (!userClaimTokenAccount) {
-      userClaimTokenAccount = await createTokenAccount(
+      userClaimTokenAccount = await findOrCreateAssociatedTokenAccount(
         connection,
         wallet,
-        faucet.claimMint,
-        wallet.publicKey,
-      );
-    };
+        SystemProgram.programId,
+        SYSVAR_RENT_PUBKEY,
+        faucet.claimMint
+      )
+    }
 
-    console.log('userClaimTokenAccount: ', userClaimTokenAccount.toString())
-    console.log('faucet: ', FAUCET_ACCOUNT.toString())
-    console.log('faucetSigner: ', faucet.faucetSigner.toString())
-    console.log('claimFaucet: ', faucet.claimFaucet.toString())
-    console.log('claimMint: ', faucet.claimMint.toString())
-    console.log('tokenProgram: ', TOKEN_PROGRAM_ID.toString())
-    console.log('systemProgram: ', SystemProgram.programId.toString())
-    console.log('SYSVAR_RENT_PUBKEY ', SYSVAR_RENT_PUBKEY.toString())
-    console.log('wallet.publicKey ', wallet.publicKey.toString())
-    await getFaucetInfo()
-
-    const tx = await program.rpc.claimToken({
+    await program.rpc.claimToken({
       accounts: {
         faucet: FAUCET_ACCOUNT,
         faucetSigner: faucet.faucetSigner,
