@@ -14,20 +14,33 @@ The Nina Spl-Claim Program streamlines the process for a developer to mint an ar
 
 A developer using the program creates a faucet, fills it when they want to provide more access, burns it when the want to close access.  Their users can then claim a token (one per wallet) - which grants them access to the closed beta test.  This takes the accounting burden off the developers, while the users can rest assured that access was given out in a first-come-first-served manner (though they will probably still think that bots took all the tokens).  Perhaps users will create secondary markets for these Claim-Token invites.  Perhaps people will use this to keep account of who is eligible for airdrops (paired with the [Solana Name Service](https://spl.solana.com/name-service) to ensure claims cannot be made by bots) - you can't really tell what people will do with a new technology.
 
+### RPC Clients
 
 To create a faucet:
-`node client/initialize.js`
-
-[Take note of the Faucet Program Address printed out on initialization.  You will need to set `FAUCET_ACCOUNT` in `/app/src/utils/faucet.js` and `/client/faucet.js`to this value as well .]
+```
+node client/initialize.js
+```
+>[Take note of the Faucet Program Address printed out on initialization.  You will need to set `FAUCET_ACCOUNT` in `/app/src/utils/faucet.js` and `/client/faucet.js`to this value as well .]
 
 To fill the faucet:
-`node client/refillFaucet.js`
+```
+node client/refillFaucet.js
+```
 
 To burn unclaimed supply:
-`node client/burn.js`
-
+```
+node client/burn.js
+```
+### Frontent Example
 A basic ReactJS frontend is provided in `/app` - in this example only holders of the Claim-Token for this app have access to `/app/src/components/ProtectedArea.js`
 
-Built using the [Anchor](https://github.com/project-serum/anchor) framework
+To Run:
+1. `cd app`
+2. `yarn`
+3. `yarn start`
+
+___
+
+⚓ Built using the [Anchor](https://github.com/project-serum/anchor) framework
 
 Currently live on Solana Devnet at: https://explorer.solana.com/address/FMuM2X5T4sju5zE6NHexuYyHX2WjL5qZmwSSYq4WdGKK?cluster=devnet
