@@ -162,7 +162,7 @@ const findOrCreateAssociatedTokenAccount = async(
     walletAddress,
     {mint: splTokenMintAddress}
   )
-   console.log(userAssociatedTokenAddress)
+
   if (!userAssociatedTokenAddress.value.length > 0) {
     const keys = [
       {
@@ -211,7 +211,7 @@ const findOrCreateAssociatedTokenAccount = async(
     const tx = new anchor.web3.Transaction();
     tx.add(ix);
     await provider.send(tx, []);
-    console.log('created: ', associatedTokenAddress);
+
     return associatedTokenAddress;
   } else {
     return associatedTokenAddress;

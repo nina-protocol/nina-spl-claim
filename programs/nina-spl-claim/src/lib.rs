@@ -52,8 +52,12 @@ pub mod nina_spl_claim {
     }
 
     pub fn claim_token(
-        ctx: Context<ClaimToken>
+        ctx: Context<ClaimToken>,
     ) -> ProgramResult {
+        if ctx.accounts.user_claim_token_account.amount > 0 {
+            return Err(ErrorCode::AlreadyClaimed.into());
+        }
+
         let faucet = &mut ctx.accounts.faucet;
 
         let cpi_accounts = Transfer {
@@ -176,4 +180,10 @@ pub struct Faucet {
     pub num_claim_refills: u64,
     pub num_claim_total_amount: u64,
     pub num_claim_total_claimed: u64,
+}
+
+#[error]
+pub enum ErrorCode {
+    #[msg("Already claimed token")]
+    AlreadyClaimed,
 }
