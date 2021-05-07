@@ -1,0 +1,135 @@
+
+/*================ Media Query Mixin ================*/
+@mixin media-query($media-query) {
+  $breakpoint-found: false;
+
+  @each $breakpoint in $grid-breakpoints {
+    $name: nth($breakpoint, 1);
+    $declaration: nth($breakpoint, 2);
+
+    @if $media-query == $name and $declaration {
+      $breakpoint-found: true;
+
+      @media only screen and #{$declaration} {
+        @content;
+      }
+    }
+  }
+
+  @if $breakpoint-found == false {
+    @warn 'Breakpoint "#{$media-query}" does not exist';
+  }
+}
+
+/*================ Responsive Show/Hide Helper ================*/
+@mixin responsive-display-helper($grid-breakpoint-type: "") {
+  // sass-lint:disable no-important
+  .#{$grid-breakpoint-type}show {
+    display: block;
+  }
+
+  .#{$grid-breakpoint-type}hide {
+    display: none !important;
+  }
+}
+
+// sass-lint:enable brace-style empty-line-between-blocks
+
+/*================ Build Base Grid Classes ================*/
+@include responsive-display-helper();
+
+/*================ Build Responsive Grid Classes ================*/
+@each $breakpoint in $grid-breakpoint-has-widths {
+  @include media-query($breakpoint) {
+    @include responsive-display-helper("#{$breakpoint}--");
+  }
+}
+
+/*================ Browser Detection ================*/
+@mixin browser($browsers: Mozilla) {
+  @each $browser in $browsers {
+    html[data-browser*="#{$browser}"] & {
+      @content;
+    }
+  }
+}
+
+/*================ Prefix ================*/
+@mixin prefix($property, $value, $prefixes) {
+  @each $prefix in $prefixes {
+    @if $prefix == webkit {
+      -webkit-#{$property}: $value;
+    } @else if $prefix == moz {
+      -moz-#{$property}: $value;
+    } @else if $prefix == ms {
+      -ms-#{$property}: $value;
+    } @else if $prefix == o {
+      -o-#{$property}: $value;
+    } @else if $prefix == spec {
+      #{$property}: $value;
+    } @else {
+      @warn 'Unrecognized prefix: #{$prefix}';
+    }
+  }
+}
+
+/*================ Transform ================*/
+@mixin transition($args...) {
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+  -webkit-transition: $args;
+}
+
+// @function unfoldTransition($transition) {
+//   // Default values
+//   $property: all;
+//   $duration: 400ms;
+//   $easing: ease-in-out; // Browser default is ease, which is what we want
+//   $delay: 0s; // Browser default is 0, which is what we want
+//   $defaultProperties: ($property, $duration, $easing, $delay);
+//
+//   // Grab transition properties if they exist
+//   $unfoldedTransition: ();
+//   @for $i from 1 through length($defaultProperties) {
+//     $p: null;
+//     @if $i <= length($transition) {
+//       $p: nth($transition, $i);
+//     } @else {
+//       $p: nth($defaultProperties, $i);
+//     }
+//     $unfoldedTransition: append($unfoldedTransition, $p);
+//   }
+//
+//   @return $unfoldedTransition;
+// }
+
+@mixin transform($params) {
+  @include prefix(transform, $params, ("webkit", "moz"));
+}
+
+/*================ Transform ================*/
+
+@mixin translate($x, $y) {
+  -webkit-transform: translate($x, $y);
+  -moz-transform: translate($x, $y);
+  -ms-transform: translate($x, $y);
+  -o-transform: translate($x, $y);
+  transform: translate($x, $y);
+}
+@mixin translateX($x) {
+  -webkit-transform: translateX($x);
+  -moz-transform: translateX($x);
+  -ms-transform: translateX($x);
+  -o-transform: translateX($x);
+  transform: translateX($x);
+}
+
+@mixin translateY($y) {
+  -webkit-transform: translateY($y);
+  -moz-transform: translateY($y);
+  -ms-transform: translateY($y);
+  -o-transform: translateY($y);
+  transform: translateY($y);
+}
