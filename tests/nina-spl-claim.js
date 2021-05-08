@@ -63,19 +63,23 @@ describe('spl-claim', () => {
 
   it('Refills the faucet', async () => {
     refillAmount = new anchor.BN(1000)
+    let faucetAccount = await program.account.faucet(faucet.publicKey);
     const tx = await program.rpc.refillFaucet(refillAmount, {
       accounts: {
         faucet: faucet.publicKey,
         faucetSigner,
         claimMint,
         claimFaucet,
+        authority: provider.wallet.publicKey,
+        faucetAuthority: faucetAccount.faucetAuthority,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       },
     });
 
-    const faucetAccount = await program.account.faucet(faucet.publicKey);
+    faucetAccount = await program.account.faucet(faucet.publicKey);
+    
     assert.ok(faucetAccount.numClaimRefills.toNumber() === 1);
     assert.ok(faucetAccount.numClaimTotalAmount.toNumber() === refillAmount.toNumber());
     assert.ok(faucetAccount.numClaimTotalClaimed.toNumber() === 0);    
@@ -119,6 +123,7 @@ describe('spl-claim', () => {
   })
 
   it('Closes the faucet', async () => {
+    const faucetAccount = await program.account.faucet(faucet.publicKey);
     let claimFaucetTokenAccount = await getTokenAccount(provider, claimFaucet);
 
     const tx = await program.rpc.closeFaucet(claimFaucetTokenAccount.amount, {
@@ -127,6 +132,8 @@ describe('spl-claim', () => {
         faucetSigner,
         claimMint,
         claimFaucet,
+        authority: provider.wallet.publicKey,
+        faucetAuthority: faucetAccount.faucetAuthority,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
@@ -135,6 +142,5 @@ describe('spl-claim', () => {
 
     claimFaucetTokenAccount = await getTokenAccount(provider, claimFaucet);
     assert.ok(claimFaucetTokenAccount.amount.toNumber() === 0);
-
   })
 });
