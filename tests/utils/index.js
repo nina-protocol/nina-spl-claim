@@ -211,6 +211,7 @@ const findOrCreateAssociatedTokenAccount = async(
     const tx = new anchor.web3.Transaction();
     tx.add(ix);
     await provider.send(tx, []);
+
     return associatedTokenAddress;
   } else {
     return associatedTokenAddress;
