@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::program_option::COption;
 use anchor_spl::token::{self, Burn, Mint, MintTo, TokenAccount, Transfer};
 
 #[program]
@@ -125,16 +126,20 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 pub struct RefillFaucet<'info> {
-    #[account(mut)]
+    #[account(seeds = [faucet.to_account_info().key.as_ref(), &[faucet.nonce]])]
     pub faucet_signer: AccountInfo<'info>,
     #[account(mut, has_one = claim_faucet, has_one = faucet_authority)]
     pub faucet: ProgramAccount<'info, Faucet>,
-    #[account(mut)]
+    #[account(
+        mut,
+        "claim_mint.mint_authority == COption::Some(*faucet_signer.key)"
+    )]
     pub claim_mint: CpiAccount<'info, Mint>,
     #[account(mut)]
     pub claim_faucet: CpiAccount<'info, TokenAccount>,
     #[account(signer)]
     pub authority: AccountInfo<'info>,
+    #[account(mut, "faucet_authority.key == authority.key")]
     pub faucet_authority: AccountInfo<'info>,
     pub token_program: AccountInfo<'info>,
     pub system_program: AccountInfo<'info>,
@@ -143,11 +148,14 @@ pub struct RefillFaucet<'info> {
 
 #[derive(Accounts)]
 pub struct ClaimToken<'info> {
-    #[account(mut)]
+    #[account(seeds = [faucet.to_account_info().key.as_ref(), &[faucet.nonce]])]
     pub faucet_signer: AccountInfo<'info>,
     #[account(mut)]
     pub faucet: ProgramAccount<'info, Faucet>,
-    #[account(mut)]
+    #[account(
+        mut,
+        "claim_mint.mint_authority == COption::Some(*faucet_signer.key)"
+    )]
     pub claim_mint: CpiAccount<'info, Mint>,
     #[account(mut)]
     pub claim_faucet: CpiAccount<'info, TokenAccount>,
@@ -160,16 +168,20 @@ pub struct ClaimToken<'info> {
 
 #[derive(Accounts)]
 pub struct CloseFaucet<'info> {
-    #[account(mut)]
+    #[account(seeds = [faucet.to_account_info().key.as_ref(), &[faucet.nonce]])]
     pub faucet_signer: AccountInfo<'info>,
     #[account(mut, has_one = claim_faucet, has_one = faucet_authority)]
     pub faucet: ProgramAccount<'info, Faucet>,
-    #[account(mut)]
+    #[account(
+        mut,
+        "claim_mint.mint_authority == COption::Some(*faucet_signer.key)"
+    )]
     pub claim_mint: CpiAccount<'info, Mint>,
     #[account(mut)]
     pub claim_faucet: CpiAccount<'info, TokenAccount>,
     #[account(signer)]
     pub authority: AccountInfo<'info>,
+    #[account(mut, "faucet_authority.key == authority.key")]
     pub faucet_authority: AccountInfo<'info>,
     pub token_program: AccountInfo<'info>,
     pub system_program: AccountInfo<'info>,

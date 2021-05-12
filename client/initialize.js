@@ -20,7 +20,7 @@ async function main() {
   const idl = JSON.parse(require('fs').readFileSync('./target/idl/nina_spl_claim.json', 'utf8'));
 
   // Address of the deployed program.
-  const programId = new anchor.web3.PublicKey('FMuM2X5T4sju5zE6NHexuYyHX2WjL5qZmwSSYq4WdGKK');
+  const programId = new anchor.web3.PublicKey('XYdpvyWpYwxPWNLSMdUYE9H6Myqprc3TahdvRYkBVe7');
 
   // Generate the program client from IDL.
   const program = new anchor.Program(idl, programId);

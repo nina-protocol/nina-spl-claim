@@ -14,6 +14,24 @@ The Nina Spl-Claim Program streamlines the process for a developer to mint an ar
 
 A developer using the program creates a faucet, fills it when they want to provide more access, burns it when the want to close access.  Their users can then claim a token (one per wallet) - which grants them access to the closed beta test.  This takes the accounting burden off the developers, while the users can rest assured that access was given out in a first-come-first-served manner.  Perhaps users will create secondary markets for these Claim-Token invites.  Perhaps people will use this to keep account of who is eligible for airdrops (paired with the [Solana Name Service](https://spl.solana.com/name-service) to ensure claims cannot be made by bots) - you can't really tell what people will do with a new technology.
 
+### Anchor
+
+1. Setup Anchor following the instructions in the ['Getting Started'}(https://project-serum.github.io/anchor/getting-started/introduction.html) docs.
+
+2. To use the existing program on devnet run `anchor build` and add the following to the bottom of `/target/idl/nina_spl_claim.json`:
+```
+{
+  ...,
+  "metadata": {
+    "address": "XYdpvyWpYwxPWNLSMdUYE9H6Myqprc3TahdvRYkBVe7"
+  }
+}
+```
+
+3. To run tests: `anchor test`
+
+4. To deploy the program yourself: `anchor deploy`
+
 ### RPC Clients
 
 To create a faucet:
@@ -44,4 +62,4 @@ ___
 
 ⚓ Built using the [Anchor](https://github.com/project-serum/anchor) framework
 
-Currently live on Solana Devnet at: https://explorer.solana.com/address/FMuM2X5T4sju5zE6NHexuYyHX2WjL5qZmwSSYq4WdGKK?cluster=devnet
+Currently live on Solana Devnet at: https://explorer.solana.com/address/XYdpvyWpYwxPWNLSMdUYE9H6Myqprc3TahdvRYkBVe7?cluster=devnet
