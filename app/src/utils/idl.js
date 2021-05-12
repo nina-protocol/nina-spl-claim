@@ -48,7 +48,7 @@ export const idl = {
       "accounts": [
         {
           "name": "faucetSigner",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -63,6 +63,16 @@ export const idl = {
         },
         {
           "name": "claimFaucet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "faucetAuthority",
           "isMut": true,
           "isSigner": false
         },
@@ -94,7 +104,7 @@ export const idl = {
       "accounts": [
         {
           "name": "faucetSigner",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -140,7 +150,7 @@ export const idl = {
       "accounts": [
         {
           "name": "faucetSigner",
-          "isMut": true,
+          "isMut": false,
           "isSigner": false
         },
         {
@@ -155,6 +165,16 @@ export const idl = {
         },
         {
           "name": "claimFaucet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "faucetAuthority",
           "isMut": true,
           "isSigner": false
         },
@@ -224,7 +244,14 @@ export const idl = {
       }
     }
   ],
+  "errors": [
+    {
+      "code": 100,
+      "name": "AlreadyClaimed",
+      "msg": "Already claimed token"
+    }
+  ],
   "metadata": {
-    "address": "FMuM2X5T4sju5zE6NHexuYyHX2WjL5qZmwSSYq4WdGKK"
+    "address": "XYdpvyWpYwxPWNLSMdUYE9H6Myqprc3TahdvRYkBVe7"
   }
 }
