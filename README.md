@@ -16,7 +16,7 @@ A developer using the program creates a faucet, fills it when they want to provi
 
 ### Anchor
 
-1. Setup Anchor following the instructions in the ['Getting Started'}(https://project-serum.github.io/anchor/getting-started/introduction.html) docs.
+1. Setup Anchor following the instructions in the ['Getting Started'](https://project-serum.github.io/anchor/getting-started/introduction.html) docs.
 
 2. To use the existing program on devnet run `anchor build` and add the following to the bottom of `/target/idl/nina_spl_claim.json`:
 ```
