@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { Program } from '@project-serum/anchor';
+import * as anchor from '@project-serum/anchor';
 import { Provider } from '@project-serum/common';
 
 import {
@@ -124,34 +124,42 @@ const accessContextHelper = (
   }
 
   const claimToken = async () => {
-    await getFaucetInfo()
-    let userClaimTokenAccount = claimTokenAccount
+    const programId = SPL_CLAIM_PROGRAM;
+    const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
+    const program = new anchor.Program(idl, programId, provider);
+    const faucetAccount = await program.account.faucet(FAUCET_ACCOUNT);
     
-    if (!userClaimTokenAccount) {
-      userClaimTokenAccount = await findOrCreateAssociatedTokenAccount(
-        connection,
-        wallet,
-        SystemProgram.programId,
-        SYSVAR_RENT_PUBKEY,
-        faucet.claimMint
-      )
-    }
+    let [userClaimTokenAccount, ix] = await findOrCreateAssociatedTokenAccount(
+      connection,
+      wallet,
+      SystemProgram.programId,
+      SYSVAR_RENT_PUBKEY,
+      faucet.claimMint
+    )
 
-    await program.rpc.claimToken({
+    let request = {
       accounts: {
         faucet: FAUCET_ACCOUNT,
-        faucetSigner: faucet.faucetSigner,
-        claimMint: faucet.claimMint,
-        claimFaucet: faucet.claimFaucet,
+        faucetSigner: faucetAccount.faucetSigner,
+        claimMint: faucetAccount.claimMint,
+        claimFaucet: faucetAccount.claimFaucet,
         userClaimTokenAccount,
         tokenProgram: TOKEN_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
         rent: SYSVAR_RENT_PUBKEY,
-      },
-    });
-    await getFaucetInfo()
-    await checkHasAccess()
-    console.log('tx')
+      }
+    }
+    if (ix) {
+      request.instructions = [ix]
+    }
+
+    try {
+      await program.rpc.claimToken(request);
+      await getFaucetInfo()
+      await checkHasAccess()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const getFaucetInfo = async() => {
@@ -160,15 +168,10 @@ const accessContextHelper = (
       commitment: 'recent',
     };
 
-    const provider = new Provider(connection, wallet, options)
-    // Address of the deployed program.
     const programId = SPL_CLAIM_PROGRAM;
-
-    // Generate the program client from IDL.
-    const program = new Program(idl, programId, provider);
-    setProgram(program)
+    const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
+    const program = new anchor.Program(idl, programId, provider);
     const faucetAccount = await program.account.faucet(FAUCET_ACCOUNT);
-    console.log(faucetAccount)
     setFaucet({...faucetAccount})
   }
 

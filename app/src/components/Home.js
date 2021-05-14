@@ -17,17 +17,12 @@ const Home = () => {
     setHasAccessState(hasAccess)
   }, [hasAccess])
 
-  // useEffect(() => {
-  //   getFaucetInfo()
-  //   console.log('gettting faucet info')
-  // }, [])
-
   useEffect(() => {
-    console.log('FAUCET: ', faucet)
     setFaucetState(faucet)
   }, [faucet?.numClaimTotalClaimed])
 
-  const onClick = () => {
+  const onClick = (e) => {
+    e.preventDefault()
     claimToken()
   }
 
