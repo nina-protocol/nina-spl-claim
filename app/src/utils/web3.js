@@ -92,23 +92,9 @@ const findOrCreateAssociatedTokenAccount = async(
       data: Buffer.from([])
     });
 
-    let { blockhash } = await connection.getRecentBlockhash();
-
-    const tx = new Transaction({
-      recentBlockhash: blockhash,
-      feePayer: wallet.publicKey,
-    });    
-    tx.add(ix);
-    tx.setSigners(wallet.publicKey);
-
-    let signed = await wallet.signTransaction(tx);
-    let txid = await connection.sendRawTransaction(signed.serialize());
-    // await connection.confirmTransaction(txid, 'finalized');
-
-    console.log('created: ', associatedTokenAddress);
-    return associatedTokenAddress;
+    return [associatedTokenAddress, ix];
   } else {
-    return associatedTokenAddress;
+    return [associatedTokenAddress, undefined];
   }
 }
 
