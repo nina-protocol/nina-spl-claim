@@ -16,23 +16,13 @@ A developer using the program creates a faucet, fills it when they want to provi
 
 ### Anchor
 
-1. Setup Anchor following the instructions in the ['Getting Started'](https://project-serum.github.io/anchor/getting-started/introduction.html) docs.
+Setup Anchor following the instructions in the ['Getting Started'](https://project-serum.github.io/anchor/getting-started/introduction.html) docs.
 
-2. To use the existing program on devnet run `anchor build` and add the following to the bottom of `/target/idl/nina_spl_claim.json`:
-```
-{
-  ...,
-  "metadata": {
-    "address": "XYdpvyWpYwxPWNLSMdUYE9H6Myqprc3TahdvRYkBVe7"
-  }
-}
-```
+To run tests: `anchor test`
 
-3. To run tests: `anchor test`
+To deploy the program yourself: `anchor deploy`
 
-4. To deploy the program yourself: `anchor deploy`
-
-### RPC Clients
+### RPC Client calls
 
 To create a faucet:
 ```
